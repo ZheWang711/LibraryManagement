@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 from management import views
 
+''' deprecated URL patterns
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'LM.views.home', name='home'),
@@ -19,3 +20,10 @@ urlpatterns = patterns('',
     url(r'^viewbook/detail/$',views.detail),
     url(r'^image/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_PATH}),
 )
+'''
+
+
+urlpatterns = [
+    url(r'^OE/', include('management.urls', namespace="OE")),
+    url(r'^admin/', include(admin.site.urls)),
+]

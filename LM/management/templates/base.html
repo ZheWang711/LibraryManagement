@@ -26,25 +26,25 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a href="/" class="navbar-brand">Library</a>
+					<a href="{% url 'OE:index' %}" class="navbar-brand">Database</a>
 				</div>
 
 				<div class="collapse navbar-collapse" id="navbar-collapse-basepage">
 					<ul class="nav navbar-nav">
-						<li id="homepage"><a href="/">主页</a></li>
+						<li id="homepage"><a href="{% url 'OE:index' %}">StartPage</a></li>
 						{% if user.permission > 1 %}
-							<li id="addbook"><a href="/addbook/">添加图书</a></li>
+							<li id="addbook"><a href="{% url 'OE:addbook' %}">Add Record</a></li>
 						{% endif %}
-						<li id="viewbook"><a href="/viewbook/">查看图书</a></li>
+						<li id="viewbook"><a href={% url 'OE:viewbook' %}>View Records</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						{% if user %}
-							<li><p class="navbar-text">欢迎你&nbsp;&nbsp;<span id="base_name">{{ user.nickname }}</span></p></li>
-							<li><a href="/logout/">注销</a></li>
-							<li><a href="/setpasswd/">修改密码</a></li>
+							<li><p class="navbar-text">Welcome&nbsp;&nbsp;<span id="base_name">{{ user.nickname }}</span></p></li>
+							<li><a href="{% url "OE:logout" %}">Log out</a></li>
+							<li><a href="{% url "OE:setpasswd" %}">Change Password</a></li>
 						{% else %}
-							<li><a href="/signup/">注册</a></li>
-							<li><a href="/login/">登录</a></li>
+							<li><a href="{% url "OE:signup" %}">Sign up</a></li>
+							<li><a href="{% url "OE:login" %}">Log in</a></li>
 						{% endif %}
 					</ul>
 				</div>
@@ -55,8 +55,10 @@
 		<!-- header -->
 		<header class="jumbotron subhead" id="header-base">
 			<div class="container">
-				<h1>图书管理系统</h1>
-				<h3>&emsp;&emsp;知识改变命运</h3>
+				<h1>Ocean Engineering Database Service</h1>
+				<h4>&emsp;&emsp;Ocean engineering is a multidisciplinary field of technology applied to the ocean environment.
+                    It is a combination of the classical engineering disciplines such as civil, mechanical and electrical
+                    engineering, with naval architecture and applied oceanography.</h4>
 			</div>
 		</header>
 		<!-- /.header -->
@@ -68,15 +70,27 @@
 		<footer class="footer" role="contentinfo">
 			<hr>
 			<div class="container">
-				<p class="text-center"><strong>HITCS</strong></p>
-				<p class="text-center">©All rights reserved</p>
-				<h5 class="text-center"> Powered by&nbsp;<a href="http://yumendy.com/">Duan Yi</a></h5>
+				<p class="text-center">
+                    <strong>SJTU Computer Technology and Application</strong><br>
+                    <a href="https://www.linkedin.com/hp/?dnr=KENyn3xUbOKp0fLuK62w_JDuyxlp0YLgrtzk">Zhe Wang</a>
+                </p>
+				<h5 class="text-center">
+                    Powered by&nbsp;&nbsp;
+                    <a href="https://www.djangoproject.com/">
+                         <img src="{% static 'icons/django-icon.jpg' %}" class="img-rounded" alt="Django" width="30" height="30">
+                    </a>&nbsp;
+                    <a href="http://getbootstrap.com/">
+                        <img src="{% static 'icons/bootstrap-icon.png' %}" class="img-rounded" alt="Bootstrap" width="30" height="30">
+                    </a>
+                </h5>
 			</div>
 		</footer>
 		<!-- /.footer-->
+
 		<script type="text/javascript">
 		    var act = document.getElementById("{{ active_menu }}");
 		    act.setAttribute("class","active");
 		</script>
+
 	</body>
 </html>
