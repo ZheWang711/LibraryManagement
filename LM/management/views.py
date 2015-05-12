@@ -27,10 +27,9 @@ def index(req):
 
 
 def signup(req):
-    '''
-    if req.session.get('username', ''):
-        return HttpResponseRedirect('/')
-    '''
+    # if req.session.get('username', ''):
+    #     return HttpResponseRedirect('/')
+
     status = ''
     if req.POST:
         post = req.POST
@@ -126,32 +125,41 @@ def addbook(req):
     return render_to_response('addbook.html', content, context_instance=RequestContext(req))
 
 
-def viewbook(req, record_type='all', keywords='', page=1):
+def viewbook(req):
     username = req.session.get('username', '')
     keywords = req.GET.get('keywd', '')
+    page = req.GET.get('page', 1)
+    book_type = req.GET.get('record_type', 'all')
+
     if username != '':
         user = MyUser.objects.get(user__username=username)
     else:
         user = ''
     type_list = get_type_list()
-    book_type = record_type   # need refract -----------------------
-    if book_type == '':
-        book_lst = Book.objects.all()
-    elif book_type not in type_list:
-        book_type = 'all'
+    # book_type = record_type   # need refract -----------------------
+    # if book_type == '':
+    #    book_lst = Book.objects.all()
+
+    # filtering procedure #
+    # filtering by type (subject) #
+    if book_type not in type_list:
+        # book_type = 'all'
         book_lst = Book.objects.all()
     else:
         book_lst = Book.objects.filter(typ=book_type)
-
+    # filtering by last-input keywords #
     book_lst = book_lst.filter(name__contains=keywords)
+    # filter by new-input keywords #
     if req.POST:
         post = req.POST
         keywords = post.get('keywords', '')
         book_lst = book_lst.filter(name__contains=keywords)
         # book_type = 'all'
 
+
     paginator = Paginator(book_lst, 1)
-    page = req.GET.get('page')
+    # page = req.GET.get('page')
+    # filtering by page #
     try:
         book_list = paginator.page(page)
     except PageNotAnInteger:
@@ -161,7 +169,7 @@ def viewbook(req, record_type='all', keywords='', page=1):
 
     content = {'user': user, 'active_menu': 'viewbook', 'type_list': type_list,
                'book_type': book_type, 'book_list': book_list,
-               'active_bar': record_type, 'keywords': keywords, 'currentpage': page}
+               'active_bar': book_type, 'keywords': keywords, 'currentpage': page}
     #return render_to_response('viewbook_new.html', content, context_instance=RequestContext(req))
     return render(req, 'viewbook_new.html', content)
 

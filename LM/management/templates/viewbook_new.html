@@ -13,7 +13,7 @@
 						全部图书
 					</a>
 					{% for typ in type_list %}
-					<a href="{% url "OE:viewbookByType" record_type=typ %}" class="list-group-item"> {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
+					<a href="?record_type={{ typ }}" class="list-group-item"> {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
 						{% if active_bar == typ %}
                         <mark>{{ typ }}</mark>
                         {% else %}
@@ -33,8 +33,8 @@
 			<div class="col-md-9 col-md-offset-1">
 
 				<div class="col-md-4 col-md-offset-8">
-
-					<form role="form" action="{% url "OE:viewbookByType" record_type=active_bar %}" method="post" name="search_form">
+                    {# <form role="form" action="{% url "OE:viewbookByType" record_type=active_bar %}" method="post" name="search_form"> #}
+					<form role="form" action="?record_type={{ active_bar }}" method="post" name="search_form">
 						{% csrf_token %}
 						<input type="search" class="form-control" name="keywords" placeholder="Enter keywords to search" id="id_search_input" autofocus="True">
 					</form>
@@ -84,14 +84,14 @@
 					<ul class="pager">
 						{% if book_list.has_previous %}
                             {# <li class="previous"><a href="?typ={{book_type}}&page={{ book_list.previous_page_number }}">上一页</a></li> #}
-							<li class="previous"><a href="?page={{ book_list.previous_page_number }}&keywd={{ keywords }}">上一页</a></li>
+							<li class="previous"><a href="?page={{ book_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ active_bar }}">上一页</a></li>
 						{% else %}
 							<li class="previous disabled"><a href="#">上一页</a></li>
 						{% endif %}
 						第 {{ book_list.number }} / {{ book_list.paginator.num_pages }}页
 						{% if book_list.has_next %}
                             {# <li class="next"><a href="?typ={{book_type}}&page={{ book_list.next_page_number }}">下一页</a></li> #}
-							<li class="next"><a href="?page={{ book_list.next_page_number }}&keywd={{ keywords }}">>下一页</a></li>
+							<li class="next"><a href="?page={{ book_list.next_page_number }}&keywd={{ keywords }}&record_type={{ active_bar }}">>下一页</a></li>
 						{% else %}
 							<li class="next disabled"><a href="#">下一页</a></li>
 						{% endif %}
