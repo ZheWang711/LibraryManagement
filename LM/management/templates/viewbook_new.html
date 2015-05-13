@@ -12,15 +12,32 @@
 					<a href="{% url "OE:viewbook" %}" class="list-group-item" >  {# <a href="{% url "OE:viewbook" %}" class="list-group-item" id="id_typ_all"> #}
 						全部图书
 					</a>
-					{% for typ in type_list %}
-					<a href="?record_type={{ typ }}" class="list-group-item"> {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
-						{% if active_bar == typ %}
-                        <mark>{{ typ }}</mark>
-                        {% else %}
-                        {{ typ }}
-                        {% endif %}
-					</a>
+                    {# DID0513: new requirement: tree-like subjects panel #}
+                             {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
+                        <div class="list-group-item">
+                            <a href="#" class="not-active-slightly">
+                                {{ book_type }}
+                            </a>
+                        </div>
+                    {% for typ in type_list %}
+                             {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
+						    {% if book_type != typ %}
+                            <div class=list-group-item">
+                                <a href="?record_type={{ typ }}" class="list-group-item">
+                                {{ typ }}
+					            </a>
+                            </div>
+                            {% endif %}
 					{% endfor %}
+                    {% if cannot_back  %}
+                        <div class="list-group-item">
+                            <a href="#" class="not-active">Return Back</a>
+                        </div>
+                    {% else %}
+                        <a href="?back=1" class="list-group-item">
+                        Return Back
+                        </a>
+                    {% endif %}
 				</div>
             {% comment %}
 				<script type="text/javascript">
@@ -34,7 +51,7 @@
 
 				<div class="col-md-4 col-md-offset-8">
                     {# <form role="form" action="{% url "OE:viewbookByType" record_type=active_bar %}" method="post" name="search_form"> #}
-					<form role="form" action="?record_type={{ active_bar }}" method="post" name="search_form">
+					<form role="form" action="?record_type={{ book_type }}" method="post" name="search_form">
 						{% csrf_token %}
 						<input type="search" class="form-control" name="keywords" placeholder="Enter keywords to search" id="id_search_input" autofocus="True">
 					</form>
@@ -52,7 +69,7 @@
 					}
 				</script>
 				{% endcomment %}
-
+                {# TODO: change the title and data to the proper value (line56-81) #}
 				<table class="table table-hover">
 					<thead>
 						<tr>
@@ -84,14 +101,14 @@
 					<ul class="pager">
 						{% if book_list.has_previous %}
                             {# <li class="previous"><a href="?typ={{book_type}}&page={{ book_list.previous_page_number }}">上一页</a></li> #}
-							<li class="previous"><a href="?page={{ book_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ active_bar }}">上一页</a></li>
+							<li class="previous"><a href="?page={{ book_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">上一页</a></li>
 						{% else %}
 							<li class="previous disabled"><a href="#">上一页</a></li>
 						{% endif %}
 						第 {{ book_list.number }} / {{ book_list.paginator.num_pages }}页
 						{% if book_list.has_next %}
                             {# <li class="next"><a href="?typ={{book_type}}&page={{ book_list.next_page_number }}">下一页</a></li> #}
-							<li class="next"><a href="?page={{ book_list.next_page_number }}&keywd={{ keywords }}&record_type={{ active_bar }}">>下一页</a></li>
+							<li class="next"><a href="?page={{ book_list.next_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">>下一页</a></li>
 						{% else %}
 							<li class="next disabled"><a href="#">下一页</a></li>
 						{% endif %}

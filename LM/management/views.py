@@ -7,7 +7,7 @@ from django.contrib import auth
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import *
 
-
+# TODO: this function seems unused
 def get_type_list():
     book_list = Book.objects.all()
     type_list = set()
@@ -73,6 +73,9 @@ def login(req):
     content = {'active_menu': 'homepage', 'status': status, 'user': ''}
     return render_to_response('login.html', content, context_instance=RequestContext(req))
 
+def get_son_list(current):
+    son_list = MySubjectRelations.objects.filter(father=current)
+    return list(son_list)
 
 def logout(req):
     auth.logout(req)
@@ -126,50 +129,68 @@ def addbook(req):
 
 
 def viewbook(req):
+    # User content
     username = req.session.get('username', '')
-    keywords = req.GET.get('keywd', '')
-    page = req.GET.get('page', 1)
-    book_type = req.GET.get('record_type', 'all')
-
     if username != '':
         user = MyUser.objects.get(user__username=username)
     else:
         user = ''
-    type_list = get_type_list()
-    # book_type = record_type   # need refract -----------------------
-    # if book_type == '':
-    #    book_lst = Book.objects.all()
+    # check if the depth is 0
 
-    # filtering procedure #
-    # filtering by type (subject) #
-    if book_type not in type_list:
-        # book_type = 'all'
-        book_lst = Book.objects.all()
+
+
+    # Roll Back
+    # TODO: disable the roll back button when session['-1'] = 0
+    if req.GET.get('back', False):
+        # TODO: add subject_relation data before test
+        req.session['-1'] -= 1
+        current_type = req.session.get(str(req.session['-1']), all)
+        type_list = [current_type] + get_son_list(current_type)
+        book_lst = Book.objects.filter(typ=current_type)
+        keywords = ''
+        page = 1
+
+    # Step Forward
     else:
-        book_lst = Book.objects.filter(typ=book_type)
-    # filtering by last-input keywords #
-    book_lst = book_lst.filter(name__contains=keywords)
-    # filter by new-input keywords #
-    if req.POST:
-        post = req.POST
-        keywords = post.get('keywords', '')
+        current_type = req.GET.get('record_type', 'all')
+        if current_type == 'all':
+            # session['0'] is the depth of browsing, which is assigned
+            # to zero when browsing the 'all' type
+            req.session['-1'] = 0
+        req.session['-1'] += 1
+        req.session[str(req.session['-1'])] = current_type
+        keywords = req.GET.get('keywd', '')
+        page = req.GET.get('page', 1)
+        type_list = [current_type] + get_son_list(current_type)
+
+        # filtering procedure #
+        # filtering by type (subject) #
+        if current_type not in type_list:
+            book_lst = Book.objects.all()
+        else:
+            book_lst = Book.objects.filter(typ=current_type)
         book_lst = book_lst.filter(name__contains=keywords)
-        # book_type = 'all'
-
-
-    paginator = Paginator(book_lst, 1)
-    # page = req.GET.get('page')
-    # filtering by page #
-    try:
-        book_list = paginator.page(page)
-    except PageNotAnInteger:
-        book_list = paginator.page(1)
-    except EmptyPage:
-        book_list = paginator.page(paginator.num_pages)
-
+        if req.POST:
+            post = req.POST
+            keywords = post.get('keywords', '')
+            book_lst = book_lst.filter(name__contains=keywords)
+            # book_type = 'all'
+        paginator = Paginator(book_lst, 5)
+        # page = req.GET.get('page')
+        # filtering by page #
+        try:
+            book_list = paginator.page(page)
+        except PageNotAnInteger:
+            book_list = paginator.page(1)
+        except EmptyPage:
+            book_list = paginator.page(paginator.num_pages)
+    cannot_back = 1 if req.session['-1'] <=1 else 0
     content = {'user': user, 'active_menu': 'viewbook', 'type_list': type_list,
-               'book_type': book_type, 'book_list': book_list,
-               'active_bar': book_type, 'keywords': keywords, 'currentpage': page}
+               'book_type': current_type, 'book_list': book_lst,
+               'keywords': keywords, 'currentpage': page,
+               'cannot_back': cannot_back
+               }
+
     #return render_to_response('viewbook_new.html', content, context_instance=RequestContext(req))
     return render(req, 'viewbook_new.html', content)
 

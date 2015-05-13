@@ -4,3 +4,4 @@ from management.models import *
 admin.site.register(MyUser)
 admin.site.register(Book)
 admin.site.register(Img)
+admin.site.register(MySubjectRelations)

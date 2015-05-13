@@ -15,3 +15,17 @@ body
 	color: #fff;
 	font-weight: bold;
 }
+
+.not-active
+{
+    pointer-events: none;
+    cursor: default;
+    color: darkgrey;
+}
+
+.not-active-slightly
+{
+    pointer-events: none;
+    cursor: default;
+    color: darkgreen;
+}
