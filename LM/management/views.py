@@ -137,8 +137,6 @@ def viewbook(req):
         user = ''
     # check if the depth is 0
 
-
-
     # Roll Back
     # TODO: disable the roll back button when session['-1'] = 0
     if req.GET.get('back', False):

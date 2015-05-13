@@ -10,15 +10,17 @@
 			<div class="col-md-2">
 				<div class="list-group">
 					<a href="{% url "OE:viewbook" %}" class="list-group-item" >  {# <a href="{% url "OE:viewbook" %}" class="list-group-item" id="id_typ_all"> #}
-						全部图书
+						all subjects
 					</a>
                     {# DID0513: new requirement: tree-like subjects panel #}
                              {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
+                        {% if book_type != 'all' and book_type != '' %}
                         <div class="list-group-item">
                             <a href="#" class="not-active-slightly">
                                 {{ book_type }}
                             </a>
                         </div>
+                        {% endif %}
                     {% for typ in type_list %}
                              {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
 						    {% if book_type != typ %}
