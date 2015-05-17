@@ -29,3 +29,8 @@ body
     cursor: default;
     color: darkgreen;
 }
+
+.field-title
+{
+    color: darkgreen;
+}

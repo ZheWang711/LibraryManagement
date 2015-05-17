@@ -21,7 +21,7 @@
                             </a>
                         </div>
                         {% endif %}
-                    {% for typ in type_list %}
+                    {% for typ in subject_list %}
                              {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
 						    {% if book_type != typ %}
                             <div class=list-group-item">
@@ -76,24 +76,24 @@
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>书名</th>
-							<th>作者</th>
-							<th>出版日期</th>
-							<th>定价</th>
+							<th>NAME</th>
+							<th>PUBDATE</th>
+							<th>RESEARCH ORG</th>
+							<th>COUNTRY</th>
 						</tr>
 					</thead>
 					<tbody>
-						{% for book in book_list %}
+						{% for record in record_list %}
 						<tr>
 							<td>{{ forloop.counter }}</td>
-							<td><a href="{% url "OE:detail" record_id=book.id %}">{{ book.name }}</a></td>
-							<td>{{ book.author }}</td>
-							<td>{{ book.pubDate|date:"Y-m-d" }}</td>
-							<td>{{ book.price|floatformat:2 }}</td>
+                            <td><a href="{% url "OE:detail" record_id=record.id %}">{{ record.name }}</a></td>
+                            <td>{{ record.pubDate|date:"Y-m-d" }}</td>
+							<td>{{ record.research_org}}</td>
+							<td>{{ record.pub_country }}</td>
 						</tr>
 						{% empty %}
 						<tr>
-							<td>暂无图书</td>
+							<td>No results.</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -101,16 +101,16 @@
 
 				<nav>
 					<ul class="pager">
-						{% if book_list.has_previous %}
+						{% if record_list.has_previous %}
                             {# <li class="previous"><a href="?typ={{book_type}}&page={{ book_list.previous_page_number }}">上一页</a></li> #}
-							<li class="previous"><a href="?page={{ book_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">上一页</a></li>
+							<li class="previous"><a href="?page={{ record_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">上一页</a></li>
 						{% else %}
 							<li class="previous disabled"><a href="#">上一页</a></li>
 						{% endif %}
-						第 {{ book_list.number }} / {{ book_list.paginator.num_pages }}页
-						{% if book_list.has_next %}
+						第 {{ record_list.number }} / {{ record_list.paginator.num_pages }}页
+						{% if record_list.has_next %}
                             {# <li class="next"><a href="?typ={{book_type}}&page={{ book_list.next_page_number }}">下一页</a></li> #}
-							<li class="next"><a href="?page={{ book_list.next_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">>下一页</a></li>
+							<li class="next"><a href="?page={{ record_list.next_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">>下一页</a></li>
 						{% else %}
 							<li class="next disabled"><a href="#">下一页</a></li>
 						{% endif %}
