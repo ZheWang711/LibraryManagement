@@ -1,19 +1,15 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}ViewBooks Debug{% endblock %}
-
 {% block content %}
-
 <div class="container">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<div class="col-md-2">
 				<div class="list-group">
-					<a href="{% url "OE:viewbook" %}" class="list-group-item" >  {# <a href="{% url "OE:viewbook" %}" class="list-group-item" id="id_typ_all"> #}
+					<a href="{% url "OE:viewbook" %}" class="list-group-item" >
 						all subjects
 					</a>
-                    {# DID0513: new requirement: tree-like subjects panel #}
-                             {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
                         {% if book_type != 'all' and book_type != '' %}
                         <div class="list-group-item">
                             <a href="#" class="not-active-slightly">
@@ -22,14 +18,13 @@
                         </div>
                         {% endif %}
                     {% for typ in subject_list %}
-                             {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
-						    {% if book_type != typ %}
+                        {% if book_type != typ %}
                             <div class=list-group-item">
                                 <a href="?record_type={{ typ }}" class="list-group-item">
                                 {{ typ }}
 					            </a>
                             </div>
-                            {% endif %}
+                        {% endif %}
 					{% endfor %}
                     {% if cannot_back  %}
                         <div class="list-group-item">
@@ -41,37 +36,14 @@
                         </a>
                     {% endif %}
 				</div>
-            {% comment %}
-				<script type="text/javascript">
-				    var act_typ = document.getElementById("id_typ_{{book_type}}");
-				    var new_class = act_typ.getAttribute("class") + " active"
-				    act_typ.setAttribute("class",new_class);
-				</script>
-			{% endcomment %}
 			</div>
 			<div class="col-md-9 col-md-offset-1">
-
 				<div class="col-md-4 col-md-offset-8">
-                    {# <form role="form" action="{% url "OE:viewbookByType" record_type=active_bar %}" method="post" name="search_form"> #}
 					<form role="form" action="?record_type={{ book_type }}" method="post" name="search_form">
 						{% csrf_token %}
 						<input type="search" class="form-control" name="keywords" placeholder="Enter keywords to search" id="id_search_input" autofocus="True">
 					</form>
 				</div>
-                {% comment %}
-				<script type="text/javascript">
-					function whenkeyup () {
-						var oldvalue = document.getElementById('id_search_input').value
-						setTimeout(function(){
-							var newvalue = document.getElementById('id_search_input').value
-							if (oldvalue == newvalue) {
-								document.search_form.submit();
-							};
-						},1500);
-					}
-				</script>
-				{% endcomment %}
-                {# TODO: change the title and data to the proper value (line56-81) #}
 				<table class="table table-hover">
 					<thead>
 						<tr>
@@ -98,29 +70,23 @@
 						{% endfor %}
 					</tbody>
 				</table>
-
 				<nav>
 					<ul class="pager">
 						{% if record_list.has_previous %}
-                            {# <li class="previous"><a href="?typ={{book_type}}&page={{ book_list.previous_page_number }}">上一页</a></li> #}
 							<li class="previous"><a href="?page={{ record_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">上一页</a></li>
 						{% else %}
 							<li class="previous disabled"><a href="#">上一页</a></li>
 						{% endif %}
 						第 {{ record_list.number }} / {{ record_list.paginator.num_pages }}页
 						{% if record_list.has_next %}
-                            {# <li class="next"><a href="?typ={{book_type}}&page={{ book_list.next_page_number }}">下一页</a></li> #}
 							<li class="next"><a href="?page={{ record_list.next_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">>下一页</a></li>
 						{% else %}
 							<li class="next disabled"><a href="#">下一页</a></li>
 						{% endif %}
 					</ul>
 				</nav>
-
 			</div>
 		</div>
 	</div>
 </div>
-
-
 {% endblock %}

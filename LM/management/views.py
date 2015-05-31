@@ -22,7 +22,9 @@ def index(req):
         user = MyUser.objects.get(user__username=username)
     else:
         user = ''
-    content = {'active_menu': 'homepage', 'user': user}
+    latest_news = MyNews.objects.all().order_by('-pub_date')[0:3]
+
+    content = {'active_menu': 'homepage', 'user': user, 'latest_news': latest_news}
     return render_to_response('index.html', content)
 
 
@@ -54,7 +56,7 @@ def signup(req):
 
 def login(req):
     if req.session.get('username', ''):
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('/OE/')
     status = ''
     if req.POST:
         post = req.POST
@@ -65,7 +67,7 @@ def login(req):
             if user.is_active:
                 auth.login(req, user)
                 req.session['username'] = username
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/OE/')
             else:
                 status = 'not_active'
         else:
@@ -79,7 +81,7 @@ def get_son_list(current):
 
 def logout(req):
     auth.logout(req)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/OE/')
 
 # current subject name
 def get_all_son_set(current, result_set):
@@ -216,11 +218,11 @@ def viewbook(req):
         # page = req.GET.get('page')
         # filtering by page #
         try:
-            book_list = paginator.page(page)
+            record_list = paginator.page(page)
         except PageNotAnInteger:
-            book_list = paginator.page(1)
+            record_list = paginator.page(1)
         except EmptyPage:
-            book_list = paginator.page(paginator.num_pages)
+            record_list = paginator.page(paginator.num_pages)
     cannot_back = 1 if req.session['-1'] <=1 else 0
     content = {'user': user, 'active_menu': 'viewbook', 'subject_list': subject_list,
                'book_type': current_subject, 'record_list': record_list,
