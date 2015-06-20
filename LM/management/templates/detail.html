@@ -8,6 +8,7 @@
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 
+            {% comment %}
 			<div class="col-md-5">
 				{% if img_list %}
 					<div id="carousel-generic" class="carousel slide" data-ride="carousel">
@@ -34,14 +35,35 @@
 					<p class="text-center">暂无图片</p>
 				{% endif %}
 			</div>
-
-			<div class="col-md-6 col-md-offset-1">
-				<h2 class="text-center">{{book.name}}</h2>
+            {% endcomment %}
+			<div class="col-md-6 col-md">
+				<h2 class="text-center">{{ record.name}}</h2>
 				<br>
-				<h3>作者：{{book.author}}</h3>
-				<h3>类别：{{book.typ}}</h3>
-				<h3>出版日期：{{book.pubDate|date:"Y-m-d"}}</h3>
-				<h3>价格：{{ book.price|floatformat:2 }}</h3>
+                <h3 class="field-title">Resource Type:</h3>
+                <p>{{ record.resource_type }}</p>
+                <h3 class="field-title">Author:</h3>
+                <p>{{ record.author }}</p>
+				<h3 class="field-title">Description: </h3>
+                <p> {{ record.record_description }} </p>
+                <h3 class="field-title">Publish Date: </h3>
+                <p>{{ record.pubDate}}</p>
+				<h3 class="field-title">Subjects：</h3>
+                <p> {% for subject in record_subjects %}
+                    {{ subject }} &nbsp;
+                    {% endfor %} </p>
+                <h3 class="field-title">Publish Country:</h3>
+                <p>  {{ record.pub_country }} </p>
+                <h3 class="field-title">OSTI Number：</h3>
+                <p> {{ record.OSTI_id }} </p>
+                <h3 class="field-title">Report Number：</h3>
+                <p> {{ record.report_num }} </p>
+                <h3 class="field-title">Research Organisations：</h3>
+                <p> {{ record.research_org }}</p>
+                <h3 class="field-title">Sponsor Organisations: </h3>
+                <p> {{ record.sponsor_org }} </p0>
+                <h3 class="field-title">Full Text：</h3>
+                <p> {{ record.full_link}} </p>
+				{# <h3>价格：{{ book.price|floatformat:2 }}</h3> #}
 			</div>
 		</div>
 	</div>

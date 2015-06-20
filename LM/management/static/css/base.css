@@ -15,3 +15,40 @@ body
 	color: #fff;
 	font-weight: bold;
 }
+
+.not-active
+{
+    pointer-events: none;
+    cursor: default;
+    color: darkgrey;
+}
+
+.not-active-slightly
+{
+    pointer-events: none;
+    cursor: default;
+    color: darkgreen;
+}
+
+.field-title
+{
+    color: darkgreen;
+}
+
+.directory-title
+{
+    color: green;
+    font-size: 16px;
+}
+
+.directory-tree
+{
+    color: coral;
+    font-size: 15px;
+}
+
+.directory-node
+{
+    color: black;
+    font-size: 15px;
+}

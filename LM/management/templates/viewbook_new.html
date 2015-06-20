@@ -1,107 +1,107 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block title %}ViewBooks Debug{% endblock %}
-
 {% block content %}
-
 <div class="container">
-	<div class="row">
+
+        {# TODO: for displaying Directory #}
+        <div class="row" >
+            <div class="col-md-10 col-md-offset-2">
+                <em class="directory-title"> Directory: </em>
+                {% for history_item in browse_history %}
+                    {% if history_item.0 != 0 %}
+                        <a href="?back={{ history_item.0 }}"><em class="directory-tree"> {{ history_item.1 }} / </em></a>
+                    {% endif %}
+                    {% if history_item.0 == 0 %}
+                        <em class="directory-node"> {{ history_item.1 }} </em>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
 		<div class="col-md-10 col-md-offset-1">
 			<div class="col-md-2">
 				<div class="list-group">
-					<a href="{% url "OE:viewbook" %}" class="list-group-item" >  {# <a href="{% url "OE:viewbook" %}" class="list-group-item" id="id_typ_all"> #}
-						全部图书
+					<a href="{% url "OE:viewbook" %}" class="list-group-item" >
+						all subjects
 					</a>
-					{% for typ in type_list %}
-					<a href="{% url "OE:viewbookByType" record_type=typ %}" class="list-group-item"> {# <a href="{% url "OE:viewbook" record_type=typ %}" class="list-group-item" id="id_typ_{{typ}}"> #}
-						{% if active_bar == typ %}
-                        <mark>{{ typ }}</mark>
-                        {% else %}
-                        {{ typ }}
+                        {% if book_type != 'all' and book_type != '' %}
+                        <div class="list-group-item">
+                            <a href="#" class="not-active-slightly">
+                                {{ book_type }}
+                            </a>
+                        </div>
                         {% endif %}
-					</a>
+                    {% for typ in subject_list %}
+                        {% if book_type != typ %}
+                            <div class=list-group-item">
+                                <a href="?record_type={{ typ }}&forward=1" class="list-group-item">
+                                {{ typ }}
+					            </a>
+                            </div>
+                        {% endif %}
 					{% endfor %}
+                    {% if cannot_back  %}
+                        <div class="list-group-item">
+                            <a href="#" class="not-active">Return Back</a>
+                        </div>
+                    {% else %}
+                        <a href="?back=1" class="list-group-item">
+                        Return Back
+                        </a>
+                    {% endif %}
 				</div>
-            {% comment %}
-				<script type="text/javascript">
-				    var act_typ = document.getElementById("id_typ_{{book_type}}");
-				    var new_class = act_typ.getAttribute("class") + " active"
-				    act_typ.setAttribute("class",new_class);
-				</script>
-			{% endcomment %}
 			</div>
 			<div class="col-md-9 col-md-offset-1">
-
 				<div class="col-md-4 col-md-offset-8">
-
-					<form role="form" action="{% url "OE:viewbookByType" record_type=active_bar %}" method="post" name="search_form">
+					<form role="form" action="?record_type={{ book_type }}" method="post" name="search_form">
 						{% csrf_token %}
 						<input type="search" class="form-control" name="keywords" placeholder="Enter keywords to search" id="id_search_input" autofocus="True">
 					</form>
 				</div>
-                {% comment %}
-				<script type="text/javascript">
-					function whenkeyup () {
-						var oldvalue = document.getElementById('id_search_input').value
-						setTimeout(function(){
-							var newvalue = document.getElementById('id_search_input').value
-							if (oldvalue == newvalue) {
-								document.search_form.submit();
-							};
-						},1500);
-					}
-				</script>
-				{% endcomment %}
-
 				<table class="table table-hover">
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>书名</th>
-							<th>作者</th>
-							<th>出版日期</th>
-							<th>定价</th>
+							<th>NAME</th>
+							<th>PUBDATE</th>
+							<th>RESEARCH ORG</th>
+							<th>COUNTRY</th>
 						</tr>
 					</thead>
 					<tbody>
-						{% for book in book_list %}
+						{% for record in record_list %}
 						<tr>
 							<td>{{ forloop.counter }}</td>
-							<td><a href="{% url "OE:detail" record_id=book.id %}">{{ book.name }}</a></td>
-							<td>{{ book.author }}</td>
-							<td>{{ book.pubDate|date:"Y-m-d" }}</td>
-							<td>{{ book.price|floatformat:2 }}</td>
+                            <td><a href="{% url "OE:detail" record_id=record.id %}">{{ record.name }}</a></td>
+                            <td>{{ record.pubDate|date:"Y-m-d" }}</td>
+							<td>{{ record.research_org}}</td>
+							<td>{{ record.pub_country }}</td>
 						</tr>
 						{% empty %}
 						<tr>
-							<td>暂无图书</td>
+							<td>No results.</td>
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
-
 				<nav>
 					<ul class="pager">
-						{% if book_list.has_previous %}
-                            {# <li class="previous"><a href="?typ={{book_type}}&page={{ book_list.previous_page_number }}">上一页</a></li> #}
-							<li class="previous"><a href="?page={{ book_list.previous_page_number }}&keywd={{ keywords }}">上一页</a></li>
+						{% if record_list.has_previous %}
+							<li class="previous"><a href="?page={{ record_list.previous_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">上一页</a></li>
 						{% else %}
 							<li class="previous disabled"><a href="#">上一页</a></li>
 						{% endif %}
-						第 {{ book_list.number }} / {{ book_list.paginator.num_pages }}页
-						{% if book_list.has_next %}
-                            {# <li class="next"><a href="?typ={{book_type}}&page={{ book_list.next_page_number }}">下一页</a></li> #}
-							<li class="next"><a href="?page={{ book_list.next_page_number }}&keywd={{ keywords }}">>下一页</a></li>
+						第 {{ record_list.number }} / {{ record_list.paginator.num_pages }}页
+						{% if record_list.has_next %}
+							<li class="next"><a href="?page={{ record_list.next_page_number }}&keywd={{ keywords }}&record_type={{ book_type }}">>下一页</a></li>
 						{% else %}
 							<li class="next disabled"><a href="#">下一页</a></li>
 						{% endif %}
 					</ul>
 				</nav>
-
 			</div>
 		</div>
 	</div>
 </div>
-
-
 {% endblock %}
