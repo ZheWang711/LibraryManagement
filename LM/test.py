@@ -30,4 +30,4 @@ def test_filter_by_all_subjects(subject):
     a = filter_by_all_subjects(subject)
     print(a)
 
-test_filter_by_all_subjects('Electrical Engineering')
+test_filter_by_all_subjects('Ocean Engineering')

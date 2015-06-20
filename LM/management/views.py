@@ -169,8 +169,9 @@ def viewbook(req):
     # check if the depth is 0
 
     # Roll Back
-    if req.GET.get('back', False):
-        req.session['-1'] -= 1
+    back_step = req.GET.get('back', 0)
+    if back_step:
+        req.session['-1'] -= int(back_step)
         current_subject = req.session.get(str(req.session['-1']), 'all')
         if current_subject != 'all':
             subject_list = [current_subject] + get_son_list(current_subject)
@@ -193,7 +194,8 @@ def viewbook(req):
             # session['0'] is the depth of browsing, which is assigned
             # to zero when browsing the 'all' type
             req.session['-1'] = 0
-        req.session['-1'] += 1
+        if req.GET.get('forward', 0) and current_subject != req.session.get(str(req.session.get('-1')), ''):
+            req.session['-1'] += 1
         req.session[str(req.session['-1'])] = current_subject
         keywords = req.GET.get('keywd', '')
         page = req.GET.get('page', 1)
@@ -224,10 +226,14 @@ def viewbook(req):
         except EmptyPage:
             record_list = paginator.page(paginator.num_pages)
     cannot_back = 1 if req.session['-1'] <=1 else 0
+
+    browse_depth = int(req.session['-1'])
+    browse_history = [(browse_depth-i, req.session[str(i)]) for i in range(1, int(req.session['-1'])+1)]
     content = {'user': user, 'active_menu': 'viewbook', 'subject_list': subject_list,
                'book_type': current_subject, 'record_list': record_list,
                'keywords': keywords, 'currentpage': page,
-               'cannot_back': cannot_back
+               'cannot_back': cannot_back,
+               'browse_history': browse_history
                }
 
     #return render_to_response('viewbook_new.html', content, context_instance=RequestContext(req))

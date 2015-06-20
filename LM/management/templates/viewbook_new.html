@@ -3,7 +3,22 @@
 {% block title %}ViewBooks Debug{% endblock %}
 {% block content %}
 <div class="container">
-	<div class="row">
+
+        {# TODO: for displaying Directory #}
+        <div class="row" >
+            <div class="col-md-10 col-md-offset-2">
+                <em class="directory-title"> Directory: </em>
+                {% for history_item in browse_history %}
+                    {% if history_item.0 != 0 %}
+                        <a href="?back={{ history_item.0 }}"><em class="directory-tree"> {{ history_item.1 }} / </em></a>
+                    {% endif %}
+                    {% if history_item.0 == 0 %}
+                        <em class="directory-node"> {{ history_item.1 }} </em>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
 		<div class="col-md-10 col-md-offset-1">
 			<div class="col-md-2">
 				<div class="list-group">
@@ -20,7 +35,7 @@
                     {% for typ in subject_list %}
                         {% if book_type != typ %}
                             <div class=list-group-item">
-                                <a href="?record_type={{ typ }}" class="list-group-item">
+                                <a href="?record_type={{ typ }}&forward=1" class="list-group-item">
                                 {{ typ }}
 					            </a>
                             </div>
