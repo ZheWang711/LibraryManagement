@@ -10,7 +10,7 @@
                 <em class="directory-title"> Directory: </em>
                 {% for history_item in browse_history %}
                     {% if history_item.0 != 0 %}
-                        <a href="?back={{ history_item.0 }}"><em class="directory-tree"> {{ history_item.1 }} / </em></a>
+                        <a href="?back={{ history_item.1 }}"><em class="directory-tree"> {{ history_item.1 }} / </em></a>
                     {% endif %}
                     {% if history_item.0 == 0 %}
                         <em class="directory-node"> {{ history_item.1 }} </em>
@@ -41,15 +41,17 @@
                             </div>
                         {% endif %}
 					{% endfor %}
+                {% comment %}
                     {% if cannot_back  %}
                         <div class="list-group-item">
                             <a href="#" class="not-active">Return Back</a>
                         </div>
                     {% else %}
-                        <a href="?back=1" class="list-group-item">
+                        <a href="?back={{ browse_history.browse_depth.1 }}" class="list-group-item">
                         Return Back
                         </a>
                     {% endif %}
+                {% endcomment %}
 				</div>
 			</div>
 			<div class="col-md-9 col-md-offset-1">
