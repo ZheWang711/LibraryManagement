@@ -193,6 +193,13 @@ def viewbook(req):
                 page = 1
                 # TODO: the outermost subject -- OE
                 subject_list = Subject.objects.filter(subject_name='Ocean Engineering')
+        paginator = Paginator(record_list, 5)
+        try:
+            record_list = paginator.page(page)
+        except PageNotAnInteger:
+            record_list = paginator.page(1)
+        except EmptyPage:
+            record_list = paginator.page(paginator.num_pages)
 
     # Step Forward
     if back_to == '':
