@@ -169,26 +169,40 @@ def viewbook(req):
     # check if the depth is 0
 
     # Roll Back
-    back_step = req.GET.get('back', 0)
-    if back_step:
-        req.session['-1'] -= int(back_step)
-        current_subject = req.session.get(str(req.session['-1']), 'all')
-        if current_subject != 'all':
-            subject_list = [current_subject] + get_son_list(current_subject)
-            # TODO: a DFS before the following step
-            #record_list = Record.objects.filter(record_subjects=current_subject)
-            record_list = filter_by_all_subjects(current_subject=current_subject)
-            keywords = ''
-            page = 1
-        else:
-            record_list = Record.objects.all()
-            keywords = ''
-            page = 1
-            # TODO: the outermost subject -- OE
-            subject_list = Subject.objects.filter(subject_name='Ocean Engineering')
+    back_to = req.GET.get('back', '')
+    if back_to != '':
+        i = 0
+        for j in range(int(req.session.get('-1') + 1)):
+            if req.session.get(str(i), '') == back_to:
+                break
+            i += 1
+        back_step = int(req.session['-1']) - i
+        if back_step:
+            req.session['-1'] -= int(back_step)
+            current_subject = req.session.get(str(req.session['-1']), 'all')
+            if current_subject != 'all':
+                subject_list = [current_subject] + get_son_list(current_subject)
+                # TODO: a DFS before the following step
+                # record_list = Record.objects.filter(record_subjects=current_subject)
+                record_list = filter_by_all_subjects(current_subject=current_subject)
+                keywords = ''
+                page = 1
+            else:
+                record_list = Record.objects.all()
+                keywords = ''
+                page = 1
+                # TODO: the outermost subject -- OE
+                subject_list = Subject.objects.filter(subject_name='Ocean Engineering')
+        paginator = Paginator(record_list, 5)
+        try:
+            record_list = paginator.page(page)
+        except PageNotAnInteger:
+            record_list = paginator.page(1)
+        except EmptyPage:
+            record_list = paginator.page(paginator.num_pages)
 
     # Step Forward
-    else:
+    if back_to == '':
         current_subject = req.GET.get('record_type', 'all')
         if current_subject == 'all':
             # session['0'] is the depth of browsing, which is assigned
@@ -208,7 +222,7 @@ def viewbook(req):
         if current_subject == 'all' or current_subject not in subject_list:
             record_list = Record.objects.all()
         else:
-            #record_list = Record.objects.filter(record_subjects=current_subject)
+            # record_list = Record.objects.filter(record_subjects=current_subject)
             record_list = filter_by_all_subjects(current_subject=current_subject)
         record_list = record_list.filter(name__contains=keywords)
         if req.POST:
@@ -225,18 +239,18 @@ def viewbook(req):
             record_list = paginator.page(1)
         except EmptyPage:
             record_list = paginator.page(paginator.num_pages)
-    cannot_back = 1 if req.session['-1'] <=1 else 0
+    # cannot_back = 1 if req.session['-1'] <= 1 else 0
 
     browse_depth = int(req.session['-1'])
     browse_history = [(browse_depth-i, req.session[str(i)]) for i in range(1, int(req.session['-1'])+1)]
     content = {'user': user, 'active_menu': 'viewbook', 'subject_list': subject_list,
                'book_type': current_subject, 'record_list': record_list,
                'keywords': keywords, 'currentpage': page,
-               'cannot_back': cannot_back,
-               'browse_history': browse_history
+               # 'cannot_back': cannot_back,
+               'browse_history': browse_history, 'browse_depth': browse_depth
                }
 
-    #return render_to_response('viewbook_new.html', content, context_instance=RequestContext(req))
+    # return render_to_response('viewbook_new.html', content, context_instance=RequestContext(req))
     return render(req, 'viewbook_new.html', content)
 
 
@@ -254,8 +268,8 @@ def detail(req, record_id):
     except:
         return HttpResponseRedirect('/viewbook/')
     # TODO: delete things about image
-    #img_list = Img.objects.filter(record=record)
-    #content = {'user': user, 'active_menu': 'viewbook', 'record': record, 'img_list':img_list}
+    # img_list = Img.objects.filter(record=record)
+    # content = {'user': user, 'active_menu': 'viewbook', 'record': record, 'img_list':img_list}
     record_subjects = record_subject_to_char(record)
     content = {'user': user, 'active_menu': 'viewbook', 'record': record, 'record_subjects': record_subjects}
     return render_to_response('detail.html', content)
